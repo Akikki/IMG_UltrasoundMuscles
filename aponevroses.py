@@ -48,7 +48,7 @@ def detect_ap(image,block):
     axs[0].axis("off")
     axs[1].imshow(image, cmap="gray")
     axs[1].scatter(coord[:, 0], coord[:, 1], c="r", s=8)
-    axs[1].set_title("zbiboupo or sum")
+    axs[1].set_title("Image : ")
     axs[1].axis("off")
     #Resultat final :
     x = np.arange(cropped.shape[1])
@@ -65,23 +65,23 @@ def detect_ap(image,block):
     #return coord, img_hessian, models #sup deep dans models
     return True
 
-img = cv.imread("apo_imgs_v1/apo_images_new_model_v1/image_0000.tif", cv.IMREAD_GRAYSCALE)
-cropped = crop_image(img)
-detect_ap(cropped,10)
+# img = cv.imread("data/apo_imgs_v1/apo_images_new_model_v1/image_0000.tif", cv.IMREAD_GRAYSCALE)
+# cropped = crop_image(img)
+# detect_ap(cropped,10)
 
-folder = Path("test_images_v2")
+folder = Path("data/test_images_v2")
 images = sorted(
     p for p in folder.rglob("*")
     if p.suffix.lower() in (".tif", ".tiff", ".png", ".jpg")
 )
 
-random.seed(676)
-selected = random.sample(images, 3)
+random.seed(100)
+selected = random.sample(images, 10)
 
 for i, path in enumerate(selected):
     img = cv.imread(str(path), cv.IMREAD_GRAYSCALE)
     cropped = crop_image(img)
-    detect_ap(cropped,10)
+    detect_ap(cropped,9)
 
 #coord, _ , sup, deep = detect_ap(cropped,10)
 # sup, deep = fit_two_lines(coord,10)
