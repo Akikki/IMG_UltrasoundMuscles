@@ -7,6 +7,3 @@ data/
 # Python cache
 __pycache__/
 *.pyc
-
-# gitignore
-.gitignore/
