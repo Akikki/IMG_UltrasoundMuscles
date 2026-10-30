@@ -99,7 +99,7 @@ def main_region(profile, threshold=5):
 
     return starts[i], ends[i]
 
-def crop_image(img, threshold=5, margin=3):
+def crop_image(img, threshold=5, margin=3,return_coords = False):
     # Convert to grayscale if necessary
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY) if img.ndim == 3 else img
 
@@ -119,4 +119,9 @@ def crop_image(img, threshold=5, margin=3):
     x0, x1 = max(0, x0-margin), min(w, x1+margin)
     y0, y1 = max(0, y0-margin), min(h, y1+margin)
 
-    return img[y0:y1, x0:x1]
+    cropped = img[y0:y1, x0:x1]
+
+    if return_coords: 
+        return cropped , (x0,x1,y0,y1)
+    
+    return cropped
