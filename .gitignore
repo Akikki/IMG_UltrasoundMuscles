@@ -12,3 +12,6 @@ test_images_v2/
 # Python cache
 __pycache__/
 *.pyc
+
+# Vscode cache
+.vscode/
