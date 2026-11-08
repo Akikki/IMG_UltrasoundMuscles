@@ -145,6 +145,19 @@ if __name__ == "__main__":
     Nimg = "0000"
     path = f"data/apo_imgs_v1/apo_images_new_model_v1/image_{Nimg}.tif"
     imgT = cv.imread(path, cv.IMREAD_GRAYSCALE)
-    if imgT is None:
-        raise FileNotFoundError(f"Impossible de lire l'image : {path}")
-    print("Profondeur détectée :", detect_depth(imgT))
+    cropped = crop_image(imgT)
+    plt.imshow(cropped, cmap = 'gray')
+    plt.title('Image test')
+    plt.axis('off')
+    plt.show()
+
+    Nimg = "0691"
+    path = f"data/apo_imgs_v1/apo_images_new_model_v1/image_{Nimg}.tif"
+    imgT1 = cv.imread(path, cv.IMREAD_GRAYSCALE)
+    cropped1 = crop_image(imgT1)
+
+    plt.imshow(cropped1, cmap = 'gray')
+    plt.title('Image test')
+    plt.axis('off')
+    plt.show()
+

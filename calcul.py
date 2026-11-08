@@ -4,29 +4,10 @@ import cv2 as cv
 from pathlib import Path
 from skimage.measure import ransac, LineModelND
 from resize import main_region, crop_image
-from aponevroses import detect_ap
+from aponevroses import detect_ap, detect_fascicle, angle_between_lines
 import skimage as ski
 
 """ In this code we will calulate the Pennation Angle (PA), the Fascicle Length (FL) and the Muscle Thickness (MT)"""
-
-# def calculate_MT(Nimg):
-#     img = cv.imread("data/apo_imgs_v1/apo_images_new_model_v1/image_"+Nimg+".tif", cv.IMREAD_GRAYSCALE)
-#     #mask = cv.imread("data/apo_masks_v1/apo_masks_new_model_v1/image_"+Nimg+".tif", cv.IMREAD_GRAYSCALE)
-#     cropped = crop_image(img, return_coords=True)
-#     coords = detect_ap(cropped,9, path = None)
-
-#     x_sup, y_sup = coords["superficial"]["x"],coords["superficial"]["y"]
-#     x_deep, y_deep = coords["deep"]["x"],coords["deep"]["y"]
-
-#     dis = []
-#     for i in range(len(x_sup)):
-#         if x_sup[i] == x_deep[i]:
-#             dis.append(y_deep[i] - y_sup[i])
-
-#     moy = np.mean(dis)
-#     print("Muscle Thickness (MT) for image "+Nimg+" in px : ", moy)
-
-#     return moy 
 
 def calculate_MT(Nimg):
     path = f"data/apo_imgs_v1/apo_images_new_model_v1/image_{Nimg}.tif"
@@ -46,9 +27,20 @@ def calculate_MT(Nimg):
 
     return moy
 
+def calculate_FL(Nimg):
+    MT = calculate_MT(Nimg)
+    _, _ , PA = detect_fascicle(Nimg)
+
+    # FL = MT / sin(PA) (using trigonometric relation)
+    FL = MT / np.sin(np.radians(PA))
+    print(f"Fascicle Length (FL) pour l'image {Nimg} est de {FL:.1f} px")
+
+    return FL
+
 if __name__ == "__main__":
     Nimg = "0000"
     calculate_MT(Nimg)
+    calculate_FL(Nimg)
 
     path = f"data/apo_imgs_v1/apo_images_new_model_v1/image_{Nimg}.tif"
     img = cv.imread(path, cv.IMREAD_GRAYSCALE)

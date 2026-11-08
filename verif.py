@@ -17,7 +17,7 @@ def verif(Nimg):
 
     x0, x1, y0, y1 = coords
     cropped_mask = mask[y0:y1, x0:x1]
-    coord = detect_ap(cropped,9, path = None)
+    coord, models = detect_ap(cropped,9, path = None)
     score = []
     
     x, y = coord["superficial"]["x"],coord["superficial"]["y"]
@@ -37,7 +37,6 @@ def verif(Nimg):
 
     score.append(good / size * 100)
 
-
     x, y = coord["deep"]["x"],coord["deep"]["y"]
     good = 0
     size = len(x)
@@ -46,35 +45,33 @@ def verif(Nimg):
         ligne = int(y[i])
         colonne = int(x[i])
 
-        x_min = max(0, ligne-25)
-        x_max = min(cropped_mask.shape[0], ligne+26)
-        y_min = max(0, colonne-25)
-        y_max = min(cropped_mask.shape[1], colonne+26)
+        x_min = max(0, ligne-45)
+        x_max = min(cropped_mask.shape[0], ligne+45)
+        y_min = max(0, colonne-45)
+        y_max = min(cropped_mask.shape[1], colonne+45)
 
         if np.any(cropped_mask[x_min:x_max, y_min:y_max] > 200):
             good += 1
     score.append(good / size * 100) #score for deep aponeurosis
-    
     score.append((score[0]+score[1])/2) # mean score
 
-    # plt.figure(figsize=(12, 7))
-    # plt.imshow(cropped_mask, cmap="gray")
+    plt.figure(figsize=(12, 7))
+    plt.imshow(cropped_mask, cmap="gray")
 
-    # plt.scatter(coord["superficial"]["x"], coord["superficial"]["y"], c="blue",s=8,label="superficial")
-    # plt.scatter(coord["deep"]["x"], coord["deep"]["y"], c="red", s=8, label="Deep")
+    plt.scatter(coord["superficial"]["x"], coord["superficial"]["y"], c="blue",s=8,label="superficial")
+    plt.scatter(coord["deep"]["x"], coord["deep"]["y"], c="red", s=8, label="Deep")
 
-    # plt.title(f"mask image {Nimg} + pts aponoreusis deep n superficial")
-    # plt.legend()
-    # plt.tight_layout()
-    # plt.show()
+    plt.title(f"mask image {Nimg} + pts aponoreusis deep n superficial")
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
 
     print(score)
     
     return score
 
-all_scores = []
-
 if __name__ == "__main__":
+    all_scores = []
     for i in range(1048):
         Nimg = f"{i:04d}"
         print(f"Image {Nimg}...")
