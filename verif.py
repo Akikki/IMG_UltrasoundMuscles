@@ -74,26 +74,25 @@ def verif(Nimg):
 
 all_scores = []
 
-for i in range(1048):
-    Nimg = f"{i:04d}"
-    print(f"Image {Nimg}...")
+if __name__ == "__main__":
+    for i in range(1048):
+        Nimg = f"{i:04d}"
+        print(f"Image {Nimg}...")
 
-    try:
-        score = verif(Nimg)
-        all_scores.append(score)
+        try:
+            score = verif(Nimg)
+            all_scores.append(score)
 
-    except Exception as e:
-        print(f"Erreur sur l'image {Nimg} : {e}")
+        except Exception as e:
+            print(f"Erreur sur l'image {Nimg} : {e}")
 
-# Calcul des moyennes
-all_scores = np.array(all_scores)
+    all_scores = np.array(all_scores)
+    mean_superficial = np.mean(all_scores[:, 0])
+    mean_deep = np.mean(all_scores[:, 1])
+    mean_global = np.mean(all_scores[:, 2])
 
-mean_superficial = np.mean(all_scores[:, 0])
-mean_deep = np.mean(all_scores[:, 1])
-mean_global = np.mean(all_scores[:, 2])
-
-print("\n===== SCORES MOYENS =====")
-print(f"Superficielle : {mean_superficial:.2f} %")
-print(f"Profonde      : {mean_deep:.2f} %")
-print(f"Moyenne globale : {mean_global:.2f} %")
-print(f"Nombre d'images traitées : {len(all_scores)} / 1048")
+    print("\n Scores moyens :")
+    print(f"Superficielle : {mean_superficial:.2f} %")
+    print(f"Profonde      : {mean_deep:.2f} %")
+    print(f"Moyenne globale : {mean_global:.2f} %")
+    print(f"Nombre d'images traitées : {len(all_scores)} / 1048")

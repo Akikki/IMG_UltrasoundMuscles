@@ -1,13 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2 as cv
-
-img = cv.imread("apo_imgs_v1/apo_images_new_model_v1/image_0000.tif", cv.IMREAD_GRAYSCALE)
-
-# plt.imshow(img,cmap='gray')
-# plt.title('image noise.tif')
-# plt.axis('off')
-# plt.show()
+import pytesseract
+import re
+import os
 
 def resize_image(image):
     """
@@ -125,3 +121,30 @@ def crop_image(img, threshold=5, margin=3,return_coords = False):
         return cropped , (x0,x1,y0,y1)
     
     return cropped
+
+
+def detect_depth(image):
+    h,w = image.shape[:2]
+    img = image[600:h, 1000:w]
+
+    # Agrandissement pour faciliter la lecture
+    img = cv.resize(img, None, fx=3, fy=3, interpolation=cv.INTER_CUBIC)
+    
+    versions = [img, cv.flip(img, 1), cv.flip(img, 0), cv.rotate(img, cv.ROTATE_180)] # Multiple orientations since some of the images are rotated
+
+    for version in versions:
+        text = pytesseract.image_to_string(version,config="--psm 11 -c tessedit_char_whitelist=0123456789.,")
+        match = re.search(r"\d+(?:[.,]\d+)?", text)
+        if match:
+            return float(match.group().replace(",", "."))
+        
+    return None
+
+
+if __name__ == "__main__":
+    Nimg = "0000"
+    path = f"data/apo_imgs_v1/apo_images_new_model_v1/image_{Nimg}.tif"
+    imgT = cv.imread(path, cv.IMREAD_GRAYSCALE)
+    if imgT is None:
+        raise FileNotFoundError(f"Impossible de lire l'image : {path}")
+    print("Profondeur détectée :", detect_depth(imgT))

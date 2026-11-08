@@ -13,7 +13,8 @@ import skimage as ski
 def detect_ap(image,block,path):
     if path == None :
         path = "No path"
-    h, w = image.shape  
+        
+    h, w = image.shape
 
     img_hessian = np.percentile(image,95) #partie de l'image la plus lumineuse.
     img_hessian = ski.filters.hessian(image,sigmas=range(2, 8, 2),black_ridges=False) #black ridges because we are using a black font and white lines
@@ -65,38 +66,41 @@ def detect_ap(image,block,path):
 
         p_droites.append({"x": inlier_pts[:, 0],"y": inlier_pts[:, 1]})
 
-    # fig, axs = plt.subplots(1, 3, figsize=(12, 5))
-    # axs[0].imshow(img_hessian, cmap="gray");  
-    # axs[0].set_title("Image hessian")
-    # axs[0].axis("off")
-    # axs[1].imshow(image, cmap="gray")
-    # axs[1].scatter(coord[:, 0], coord[:, 1], c="b", s=9)
-    # axs[1].set_title(os.path.basename(path))
-    # axs[1].axis("off")
-
-    # x = np.arange(cropped.shape[1])
-    # axs[2].imshow(cropped, cmap="gray")
-    # plt.plot(x, models[0].predict_y(x), "r-")
-    # plt.plot(x, models[1].predict_y(x), "c-")
-    # plt.ylim(cropped.shape[0], 0)
-    # axs[2].set_title("Aponeurosis")
-    # axs[2].axis("off")
-
-    # plt.tight_layout()
-    # plt.show()
+    fig, axs = plt.subplots(1, 3, figsize=(12, 5))
+    axs[0].imshow(img_hessian, cmap="gray");  
+    axs[0].set_title("Image hessian")
+    axs[0].axis("off")
     
-    return {"superficial": p_droites[0], "deep": p_droites[1]}
+    axs[1].imshow(image, cmap="gray")
+    axs[1].scatter(coord[:, 0], coord[:, 1], c="b", s=9)
+    axs[1].set_title(os.path.basename(path))
+    axs[1].axis("off")
 
-folder = Path("data/apo_imgs_v1")
-images = sorted(
-    p for p in folder.rglob("*")
-    if p.suffix.lower() in (".tif", ".tiff", ".png", ".jpg")
-)
+    x = np.arange(w)
+    axs[2].imshow(image, cmap="gray")
+    axs[2].plot(x, models[0].predict_y(x), "r-")
+    axs[2].plot(x, models[1].predict_y(x), "c-")
+    axs[2].set_ylim(h, 0)
+    axs[2].set_title("Aponeurosis")
+    axs[2].axis("off")
 
-random.seed(100)
-selected = random.sample(images, 1)
+    plt.tight_layout()
+    plt.show()
+    
+    return {"superficial": p_droites[0], "deep": p_droites[1]}, models
 
-for i, path in enumerate(selected):
-    img = cv.imread(str(path), cv.IMREAD_GRAYSCALE)
-    cropped = crop_image(img)
-    print(detect_ap(cropped,9,path))
+""" TEST /////////// """
+if __name__ == "__main__":
+    folder = Path("data/apo_imgs_v1")
+    images = sorted(
+        p for p in folder.rglob("*")
+        if p.suffix.lower() in (".tif", ".tiff", ".png", ".jpg")
+    )
+
+    random.seed(100)
+    selected = random.sample(images, 1)
+
+    for i, path in enumerate(selected):
+        img = cv.imread(str(path), cv.IMREAD_GRAYSCALE)
+        cropped = crop_image(img)
+        print(detect_ap(cropped,9,path))
