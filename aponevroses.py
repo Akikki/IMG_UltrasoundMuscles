@@ -82,7 +82,7 @@ def detect_ap(image,block,n_lines=20):
             continue
 
         # On ignore les droites trop proches
-        if np.min(np.abs(d)) < 2 * block:
+        if np.min(np.abs(d)) < 10 * block:
             continue
 
         # On compte les points entre les deux droites
@@ -109,7 +109,7 @@ def detect_ap(image,block,n_lines=20):
             continue
 
         # Score : densité de points entre les droites
-        score = count / (area **0.6)
+        score = count / (area **0.7)
 
         if score > best_score:
             best_score = score
@@ -189,6 +189,12 @@ images = sorted(
     if p.suffix.lower() in (".tif", ".tiff", ".png", ".jpg")
 )
 
+# Single
+img = cv.imread("data/test_images_v2/test_set_v2/IMG_00223.tif", cv.IMREAD_GRAYSCALE)
+cropped = crop_image(img)
+detect_ap(cropped,9,20)
+
+# Multi select
 random.seed(100)
 selected = random.sample(images, 10)
 
