@@ -3,11 +3,6 @@
 
 # Dataset
 data/
-apo_imgs_v1/
-apo_masks_v1/
-fasc_imgs_v1/
-fasc_masks_v1/
-test_images_v2/
 
 # Python cache
 __pycache__/
